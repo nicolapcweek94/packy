@@ -29,7 +29,7 @@ if args['version']:
 if not args['repo']:
     args['repo'] = 'repo.json'
 
-if not args['packages'] or not args['action']:
+if (not args['packages'] and not args['action'] == 'list') or not args['action']:
     print('Unless you\'re using -v or -h, you might want to pass me a package name and an action to do with it.')
     sys.exit(0)
 
@@ -42,8 +42,12 @@ elif args['action'] == 'remove':
     #TODO implement remove
     print('TBI')
 elif args['action'] == 'list':
-    #TODO implement list
-    print('TBI')
+    try:
+        print(str(len(repo)) + ' package(s) available in the repository:')
+        for name in repo:
+            print(name + ' by ' +  repo[name]['author'] + ', version ' + repo[name]['version'])
+    except:
+        raise
 elif args['action'] == 'search':
     try:
         print('Found package ' + args['packages'] + ', version ' + repo[args['packages']]['version'] + ' by ' + repo[args['packages']]['author'] + '.')

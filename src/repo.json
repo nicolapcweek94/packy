@@ -1,9 +1,17 @@
 {
     "packy": {
-        "repo": "https://github.com/nicolapcweek94/packy",
+        "url": "https://github.com/nicolapcweek94/packy",
         "author": "nicolapcweek94",
         "version": "0.0.1",
         "deps": ["python", "git"],
         "type": "source"
+    },
+
+    "android-repo": {
+        "url": "https://storage.googleapis.com/git-repo-downloads/repo",
+        "author": "Android Dev Team",
+        "version": "1.21",
+        "deps": [],
+        "type": "bynary"
     }
 }
