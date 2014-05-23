@@ -34,7 +34,6 @@ if not args['packages'] or not args['action']:
     print('Unless you\'re using -v or -h, you might want to pass me a package name and an action to do with it.')
     raise SystemExit(0)
 
-print(args['repo'])
 repo = json.loads(open(args['repo']).read())
 
 if args['action'] == 'install':
@@ -50,8 +49,12 @@ elif args['action'] == 'search':
     #TODO implement search
     print('TBI')
 elif args['action'] == 'version':
-    #TODO implement version
-    print('TBI')
+    try:
+        print('Found available version in the repository: ' + repo[args['packages']]['version'])
+    except KeyError:
+        print('Package not found in the repository.')
+    except:
+        raise
 else:
     print('Unrecognized action. You should use one of these: \'install\', \'remove\', \'list\', \'search\', \'version\'')
     raise SystemExit(0)
