@@ -3,6 +3,7 @@
         "repo": "https://github.com/nicolapcweek94/packy",
         "author": "nicolapcweek94",
         "version": "0.0.1",
-        "deps": ["python", "git"]
+        "deps": ["python", "git"],
+        "type": "source"
     }
 }

@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-import argparse, json
+import argparse, json, sys
 
 version = 'Version 0, Update 0, Build 0, BETA.'
 
 parser = argparse.ArgumentParser(description='Packy, the worst package manager around')
-# TODO Add Options (remove, install, list)
 
 parser.add_argument('action', metavar='action',
         nargs='?',
@@ -25,14 +24,14 @@ args = vars(parser.parse_args())
 
 if args['version']:
     print(version)
-    raise SystemExit(0)
+    sys.exit(0)
 
 if not args['repo']:
     args['repo'] = 'repo.json'
 
 if not args['packages'] or not args['action']:
     print('Unless you\'re using -v or -h, you might want to pass me a package name and an action to do with it.')
-    raise SystemExit(0)
+    sys.exit(0)
 
 repo = json.loads(open(args['repo']).read())
 
@@ -46,8 +45,12 @@ elif args['action'] == 'list':
     #TODO implement list
     print('TBI')
 elif args['action'] == 'search':
-    #TODO implement search
-    print('TBI')
+    try:
+        print('Found package ' + args['packages'] + ', version ' + repo[args['packages']]['version'] + ' by ' + repo[args['packages']]['author'] + '.')
+    except KeyError:
+        print('Package not found in the repository')
+    except:
+        raise
 elif args['action'] == 'version':
     try:
         print('Found available version in the repository: ' + repo[args['packages']]['version'])
@@ -57,4 +60,4 @@ elif args['action'] == 'version':
         raise
 else:
     print('Unrecognized action. You should use one of these: \'install\', \'remove\', \'list\', \'search\', \'version\'')
-    raise SystemExit(0)
+    sys.exit(0)
