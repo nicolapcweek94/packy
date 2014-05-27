@@ -4,7 +4,8 @@
         "author": "nicolapcweek94",
         "version": "0.0.1",
         "deps": ["python", "git"],
-        "type": "source"
+        "type": "git",
+        "action": "none"
     },
 
     "android-repo": {
@@ -12,6 +13,16 @@
         "author": "Android Dev Team",
         "version": "1.21",
         "deps": [],
-        "type": "bynary"
+        "type": "binary",
+        "action": "download"
+    },
+
+    "rusticminesweeper": {
+        "url": "https://github.com/aochagavia/RusticMineSweeper",
+        "author": "aochagavia",
+        "version": "1.0",
+        "deps": ["rust"],
+        "type": "git",
+        "action": "rustc src/msweeper.rs"
     }
 }
