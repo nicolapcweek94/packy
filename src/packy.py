@@ -4,6 +4,7 @@ import json
 import sys
 import utils
 import subprocess
+import os
 
 version = 'Version 0, Update 0, Build 0, BETA.'
 
@@ -41,7 +42,6 @@ if (not args['package'] and not args['action'] == 'list') or not args['action']:
 repo = json.loads(open(args['repo']).read())
 
 if args['action'] == 'install':
-    # TODO implement install
     try:
         package = repo[args['package']]
         if package['type'] == 'binary' and package['action'] == 'download':
@@ -57,9 +57,13 @@ if args['action'] == 'install':
             except:
                 raise
         elif package['type'] == 'git':
-            # TODO git clone package['url']
-            # TODO package['action']
-            print('Git repo, will download and compile')
+            try:
+                subprocess.check_output(['git', 'clone', package['url'], args['package']])
+                os.chdir(args['package'])
+                subprocess.check_output(package['action'].split(' '))
+                os.chdir('..')
+            except subprocess.CalledProcessError as err:
+                print('Something went wrong while trying to clone the repo and build the package. Check the output for errors')
         elif package['action'] == 'none':
             print("I have nothing to do here")
     except KeyError:
