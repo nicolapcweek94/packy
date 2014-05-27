@@ -3,6 +3,7 @@ import argparse
 import json
 import sys
 import utils
+import subprocess
 
 version = 'Version 0, Update 0, Build 0, BETA.'
 
@@ -47,8 +48,14 @@ if args['action'] == 'install':
             name = utils.store(package['url'])
             print('Succesfully downloaded ' + name)
         elif package['type'] == 'binary' and package['action'] == 'run':
-            # TODO run the binary file
-            print('Binary file will be run')
+            name = utils.store(package['url'])
+            try:
+                subprocess.check_call(['chmod', '+x', name])
+                subprocess.check_output(name)
+            except subprocess.CalledProcessError as err:
+                print('Everything worked for me, but the downloaded binary file was not happy to be executed by me: it returned the error code ' + str(err.returncode))
+            except:
+                raise
         elif package['type'] == 'git':
             # TODO git clone package['url']
             # TODO package['action']
