@@ -44,8 +44,11 @@ if args['action'] == 'install':
     try:
         package = repo[args['package']]
         if package['type'] == 'binary' and package['action'] == 'download':
-            # TODO download the binary file
-            print('Binary package, will download')
+            name = utils.store(package['url'])
+            print('Succesfully downloaded ' + name)
+        elif package['type'] == 'binary' and package['action'] == 'run':
+            # TODO run the binary file
+            print('Binary file will be run')
         elif package['type'] == 'git':
             # TODO git clone package['url']
             # TODO package['action']
