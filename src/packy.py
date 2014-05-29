@@ -40,66 +40,61 @@ if (not args['package'] and not args['action'] == 'list') or not args['action']:
     sys.exit(0)
 
 repo = json.loads(open(args['repo']).read())
+basedir = '/home/wasp/packy'
+installdir = basedir + '/bin/'
+sourcesdir = basedir + '/src/'
 
-if args['action'] == 'install':
-    try:
+try:
+    if args['action'] == 'install':
         package = repo[args['package']]
-        if package['type'] == 'binary' and package['action'] == 'download':
-            name = utils.store(package['url'])
+        if package['type'] == 'binary' and package['action'] == 'download': # binary package
+            name = utils.store(package['url'], installdir)
             print('Succesfully downloaded ' + name)
-        elif package['type'] == 'binary' and package['action'] == 'run':
-            name = utils.store(package['url'])
-            try:
-                subprocess.check_call(['chmod', '+x', name])
-                subprocess.check_output(name)
-            except subprocess.CalledProcessError as err:
-                print('Everything worked for me, but the downloaded binary file was not happy to be executed by me: it returned the error code ' + str(err.returncode))
-            except:
-                raise
-        elif package['type'] == 'git':
-            try:
-                subprocess.check_output(['git', 'clone', package['url'], args['package']])
-                os.chdir(args['package'])
-                subprocess.check_output(package['action'].split(' '))
-                os.chdir('..')
-            except subprocess.CalledProcessError as err:
-                print('Something went wrong while trying to clone the repo and build the package. Check the output for errors')
+
+        elif package['type'] == 'binary' and package['action'] == 'run': # binary package + run after download
+            name = utils.store(package['url'], installdir)
+            subprocess.check_call(['chmod', '+x', installdir + name])
+            subprocess.check_output(installdir + name)
+
+        elif package['type'] == 'git': # git sources
+            subprocess.check_output(['git', 'clone', package['url'], args['package']])
+            os.chdir(args['package'])
+            subprocess.check_output(package['action'].split(' '))
+            os.chdir('..')
+
         elif package['action'] == 'none':
             print("I have nothing to do here")
-    except KeyError:
-        print('Package not found')
-    except:
-        raise
-elif args['action'] == 'remove':
-    # TODO implement remove
-    print('TBI')
-elif args['action'] == 'update':
-    # TODO implement update
-    print('TBI')
-elif args['action'] == 'sync':
-    # TODO implement repo update
-    print('TBI')
-elif args['action'] == 'list':
-    try:
+
+    elif args['action'] == 'remove':
+        # TODO implement remove
+        print('TBI')
+
+    elif args['action'] == 'update':
+        # TODO implement update
+        print('TBI')
+
+    elif args['action'] == 'sync':
+        # TODO implement repo update
+        print('TBI')
+
+    elif args['action'] == 'list':
         print(str(len(repo)) + ' package(s) available in the repository:')
         for name in repo:
             print(name + ' by ' + repo[name]['author'] + ', version ' + repo[name]['version'])
-    except:
-        raise
-elif args['action'] == 'search':
-    try:
+
+    elif args['action'] == 'search':
         print('Found package ' + args['package'] + ', version ' + repo[args['package']]['version'] + ' by ' + repo[args['package']]['author'] + '.')
-    except KeyError:
-        print('Package not found in the repository')
-    except:
-        raise
-elif args['action'] == 'version':
-    try:
+
+    elif args['action'] == 'version':
         print('Found available version in the repository: ' + repo[args['package']]['version'])
-    except KeyError:
-        print('Package not found in the repository.')
-    except:
-        raise
-else:
-    print('Unrecognized action. You should use one of these: \'install\', \'remove\', \'update\', \'sync\', \'list\', \'search\', \'version\'')
-    sys.exit(0)
+
+    else:
+        print('Unrecognized action. You should use one of these: \'install\', \'remove\', \'update\', \'sync\', \'list\', \'search\', \'version\'')
+        sys.exit(0)
+
+except KeyError:
+    print('Package not found')
+except subprocess.CalledProcessError:
+    print('Something went wrong while trying to install the package. Check the output for errors, please.')
+except:
+    raise
